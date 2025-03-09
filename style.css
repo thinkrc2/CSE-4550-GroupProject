@@ -151,6 +151,11 @@ body {
     font-size: 15px;
 }
 
+#hero button a{
+    text-decoration: none;
+    color: #088178;
+}
+
 #feature{
     display: flex;
     align-items: center;
@@ -400,6 +405,15 @@ footer a:hover{
 #pagination a i{
     font-size: 16px;
     font-weight: 600;
+}
+
+#pagination a:hover,
+#pagination a.page-link{
+    background-color: #f1f1f8;
+    color: #088178;
+    transition: 0.2s ease;
+    border: 1px solid #088178;
+    border-radius: 4px;
 }
 
 /*Single Product*/
