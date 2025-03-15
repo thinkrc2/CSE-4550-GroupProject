@@ -476,6 +476,86 @@ footer a:hover{
     line-height: 25px;
 }
 
+/*About-Us Page*/
+#about-details {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+#about-details h2{
+    margin-top: 70px;
+    text-align: center;
+    font-size: 30px;
+}
+
+#about-details p {
+    padding: 0px 100px 0px 100px;
+    font-size: 18px;
+    color:#686666;
+    font-weight: normal;
+    line-height: 1.4;
+    text-align: center;
+}
+
+#about-content{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1000px;
+    margin: 0 auto;
+    gap: 20px;
+    position: relative;
+}
+
+#about-box {
+    flex: 1;
+    margin-top: 50px;
+    max-width: 600px;
+    background: rgb(240, 240, 240);
+    padding: 20px 200px 20px 20px;
+    border-radius: 1px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    margin-bottom: 80px;
+    position: relative;
+    z-index: 1;
+}
+
+#about-box h3{
+    font-size: 25px;
+    color: #555555;
+    line-height: 2.2;
+    text-align: left;
+}
+
+#about-box p2{
+    font-size: 16px;
+    color: #686666;
+    line-height: 1.4;
+    text-align: left;
+}
+
+#about-image{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+}
+
+#about-image img{
+    max-width: 180%;
+    border-radius: 1px;
+    box-shadow: 5px 5px 5px 1px rgba(0, 0 , 0, 0.1);
+    position: relative;
+    right: 40px;
+    top: 50%;
+    transform: translateY(30%);
+    margin-bottom: 50px;
+}
+
 /*Cart Page */
 #cart{
     overflow-x: auto;
