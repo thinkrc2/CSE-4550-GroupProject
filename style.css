@@ -316,9 +316,18 @@ body {
     color: #ef3636;
 }
 
+#banner button a{
+    text-decoration: none;
+    color: #000;
+}
+
 #banner button:hover{
     background: #088178;
     color: #fff;
+}
+
+#banner button:hover a{
+    color:#fff;
 }
 
 footer{
