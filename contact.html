@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE-edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buy & Battle TCG</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/fontawesome.min.css" integrity="sha384-NvKbDTEnL+A8F/AA5Tc5kmMLSJHUO868P+lDtTpJIeQdGYaUIuLr4lVGOEA1OcMy" crossorigin="anonymous">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
 
     <link rel="stylesheet" href="style.css">
@@ -31,17 +32,65 @@
         </div>
     </section>
 
-    <section id="page-header">
-        <h2>Contact us</h2>
+    <section class="contact">
+        <div class="content">
+            <h2>Contact Us</h2>
+            <p>Please fill out the boxes below with your information and submit a response for us to get
+                back in touch with you. You can also reach us either in person or through phone with 
+                the address and number listed below.
+            </p>
+        </div>
+        <div class="container">
+            <div class="contactInfo">
+                <div class="box">
+                    <div class="icon"><i class="fa fa-map-marker" aria-hidden="true"></i></div>
+                    <div class="text">
+                        <h3>Address</h3>
+                        <p>1107 Cedar Ave,<br>Redlands, California,<br>92373</p>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="icon"><i class="fa fa-phone" aria-hidden="true"></i></div>
+                    <div class="text">
+                        <h3>Phone</h3>
+                        <p>909-279-5130</p>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="icon"><i class="fa fa-envelope" aria-hidden="true"></i></div>
+                    <div class="text">
+                        <h3>Email</h3>
+                        <p>scottrenfrow01@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+            <div class="contactForm">
+                <form action="https://api.web3forms.com/submit" method="POST">
+                    <h2>Send Message</h2>
+                    <input type="hidden" name="access_key" value="63c4ffaa-d95e-42da-922a-37f04f56ccc5">
+                    <div class="inputBox">
+                        <input type="text" name="name" required>
+                        <span>Full Name</span>
+                    </div>
+                    <div class="inputBox">
+                        <input type="text" name="name" required>
+                        <span>Email</span>
+                    </div>
+                    <div class="inputBox">
+                        <textarea name="message" required></textarea>
+                        <span>Type your message...</span>
+                    </div>
+                    <div class="inputBox">
+                        <button type="submit">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </section>
 
-    <section id="about-details">
-        <h2>How It All Started</h2>
-            <p>We were just six friends who shared a passion for Magic: 
-            The Gathering. From late-night drafts to heated commander battles, 
-            we spent countless hours immersed in the game we loved. But as our 
-            collections grew, so did our desire to do something more—something 
-            that would let us share our passion with the wider MTG community.</p>
+    <!--<section id="about-details">
+        <h2>Give us a call</h2>
+            <p>Phone Number: (909)537-5000</p>
         <div id="about-content">
             <div id="about-box">
                 <h3>Friends with an idea</h3>
@@ -69,7 +118,7 @@
             We’re more than just a business; we’re players, collectors, and fans, 
             just like you. Thanks for being part of our journey—let’s keep the 
             game alive, together!</p>
-    </section>
+    </section>-->
 
     <footer class="section-p1">
         <div class="col">
