@@ -660,10 +660,219 @@ footer a:hover{
     padding-bottom: 15px;
 }
 
-#subtotal button{
+#subtotal button a{
     background-color: #088178;
+    text-decoration: none;
     color: #fff;
     padding: 12px 20px;
+    border-radius: 4px;
+}
+
+#subtotal button:hover a{
+    background: #f4f4f4;
+    color: #088178;
+    transition: 0.2s;
+}
+
+
+/*Checkout Page */
+#checkout{
+    overflow-x: auto;
+}
+
+#checkout table{
+    width:100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    white-space: nowrap;
+}
+
+#checkout table img{
+    width: 70px;
+}
+
+#checkout table td:nth-child(1){
+    width: 100px;
+    text-align: center;
+}
+
+#checkout table td:nth-child(2){
+    width: 100px;
+    text-align: center; 
+}
+
+#checkout table td:nth-child(3){
+    width: 100px;
+    text-align: center; 
+}
+
+#checkout table td:nth-child(4){
+    width: 100px;
+    text-align: center; 
+}
+
+#checkout table td:nth-child(5){
+    font-weight: 600;
+    width: 150px;
+    text-align: center; 
+}
+
+#checkout table thead{
+    border: 1px solid #e2e9e1;
+    border-left: none;
+    border-right: none;
+}
+
+#checkout table thead td{
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 13px;
+    padding: 18px 0;
+}
+
+#checkout table tbody tr td{
+    padding-top: 15px;
+}
+
+#checkout table tbody td{
+    font-size: 13px;
+}
+
+#checkoutTable{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+#subtotal{
+    width: 50%;
+    margin-bottom: 30px;
+    border: 1px solid #e2e9e1;
+    padding: 30px;
+}
+
+#subtotal table{
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+#subtotal table td{
+    width: 50px;
+    border: 1px solid #e2e9e1;
+    padding: 10px;
+    font-size: 13px;
+}
+
+#subtotal h3{
+    font-size: 30px;
+    color: #333;
+    font-weight: 500;
+    padding-bottom: 15px;
+}
+
+.personal{
+    position:relative;
+    min-height: 30vh;
+    padding: 10px 100px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.contain{
+    width:100%;
+    display: flex;
+    justify-content: center;
+    align-items: left;
+    margin-top: 30px;
+}
+
+.personalForm{
+    width: 40%;
+    padding: 40px;
+    background: #fff;
+    border: 1px solid #e2e9e1;
+    margin-bottom: 80px;
+}
+
+.personalForm h2{
+    font-size: 30px;
+    color: #333;
+    font-weight: 500;
+}
+
+.personalForm .inputBox{
+    position: relative;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.personalForm .inputBox input{
+    width: 100%;
+    padding: 5px 0;
+    font-size: 16px;
+    margin: 10px 0;
+    border: none;
+    border-bottom: 2px solid #333;
+    outline: none;
+    resize: none;
+}
+
+.personalForm .inputBox span{
+    position: absolute;
+    left: 0;
+    padding: 5px 0;
+    font-size: 16px;
+    margin: 10px 0;
+    pointer-events: none;
+    transition: 0.5s;
+    color: #666;
+}
+
+.personalForm .inputBox input:focus ~ span,
+.personalForm .inputBox input:valid ~ span{
+    color: #e91e63;
+    font-size: 12px;
+    transform: translateY(-20px);
+}
+
+/*.personalForm .inputBox button{
+    width: 110px;
+    background: #088178;
+    color:#fff;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 15px;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.personalForm .inputBox button:hover{
+    background: #f4f4f4;
+    color: #088178;
+    transition: 0.2s;
+}*/
+
+.personalForm .inputBox button[type="submit"]{
+    width: 110px;
+    background: #088178;
+    color:#fff;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 15px;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+
+.personalForm .inputBox button:hover[type="submit"]{
+    background: #f4f4f4;
+    color: #088178;
+    transition: 0.2s;
 }
 
 /*Contact Us Page*/
@@ -801,7 +1010,15 @@ footer a:hover{
     border: none;
     cursor: pointer;
     padding: 10px;
+    text-decoration: none;
+    border-radius: 4px;
     font-size: 18px;
+}
+
+.contactForm .inputBox button:hover[type="submit"]{
+    background: #f4f4f4;
+    color: #00bcd4;
+    transition: 0.2s;
 }
 
 
