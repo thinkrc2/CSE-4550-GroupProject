@@ -54,8 +54,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         cardElement.classList.add("pro");
         cardElement.setAttribute("data-id", card.id);
 
+        const imageUrl = card.image_url || 'img/mat-1-coppercoat-vanguard.jpg';
+
         cardElement.innerHTML = `
-            <img src="${card.image_url}" alt="${card.name}">
+            <img src="${card.cardimageurl}" alt="${card.name}">
             <div class="des">
                 <span>Magic the Gathering</span>
                 <h5>${card.name}</h5>
@@ -70,6 +72,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             </div>
             <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
         `;
+
+        if (!card.image_url) {
+            console.warn(`Card "${card.name}" has no image_url!`);
+          }
 
         cardElement.addEventListener("click", () => {
             window.location.href = `sproduct.html?id=${card.id}`;
