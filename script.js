@@ -1,6 +1,140 @@
+// Navigation bar toggle
 const bar = document.getElementById('bar');
 const close = document.getElementById('close');
 const nav = document.getElementById('navbar');
+
+if (bar) {
+    bar.addEventListener('click', () => {
+        nav.classList.add('active');
+    });
+}
+
+if (close) {
+    close.addEventListener('click', () => {
+        nav.classList.remove('active');
+    });
+}
+
+// ✅ Supabase Setup
+const supabaseUrl = 'https://ezmppukfhgzsfekakkix.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6bXBwdWtmaGd6c2Zla2Fra2l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0NjY2MDgsImV4cCI6MjA2MjA0MjYwOH0.0FJr4AhMbyImCTlNmqMykiKnNRYeXYT5soMS8O4POYA';
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// ✅ Wait until DOM is ready
+document.addEventListener("DOMContentLoaded", async function () {
+    const container = document.getElementById("card-container");
+    if (!container) {
+        console.warn("Card container not found.");
+        return;
+    }
+
+    console.log("Fetching cards from Supabase...");
+    const { data: cards, error } = await supabase
+        .from('cards')
+        .select('*');
+
+    if (error) {
+        console.error("Supabase error:", error.message);
+        container.innerHTML = "<p style='color:red;'>Failed to load cards. Check console for details.</p>";
+        return;
+    }
+
+    console.log("Cards fetched:", cards);
+
+    if (!cards || cards.length === 0) {
+        container.innerHTML = "<p>No cards available right now. Please check back later.</p>";
+        return;
+    }
+
+    // Clear old content
+    container.innerHTML = "";
+
+    cards.forEach(card => {
+        const cardElement = document.createElement("div");
+        cardElement.classList.add("pro");
+        cardElement.setAttribute("data-id", card.id);
+
+        cardElement.innerHTML = `
+            <img src="${card.image_url}" alt="${card.name}">
+            <div class="des">
+                <span>Magic the Gathering</span>
+                <h5>${card.name}</h5>
+                <div class="star">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <h4>$${card.price}</h4>
+            </div>
+            <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+        `;
+
+        cardElement.addEventListener("click", () => {
+            window.location.href = `sproduct.html?id=${card.id}`;
+        });
+
+        container.appendChild(cardElement);
+    });
+});
+
+
+/*const bar = document.getElementById('bar');
+const close = document.getElementById('close');
+const nav = document.getElementById('navbar');
+
+//
+const supabaseUrl = 'https://ezmppukfhgzsfekakkix.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6bXBwdWtmaGd6c2Zla2Fra2l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0NjY2MDgsImV4cCI6MjA2MjA0MjYwOH0.0FJr4AhMbyImCTlNmqMykiKnNRYeXYT5soMS8O4POYA';
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+  document.addEventListener("DOMContentLoaded", async function () {
+    const container = document.getElementById("card-container");
+    if (!container) return;
+
+    const { data: cards, error } = await supabase
+        .from('cards')
+        .select('*');
+
+        console.log(cards, error);
+
+    if (error) {
+        console.error("Error fetching cards:", error);
+        container.innerHTML = "<p>Failed to load cards.</p>";
+        return;
+    }
+
+    container.innerHTML = ""; // Clear placeholder
+
+    cards.forEach(card => {
+        const cardElement = document.createElement("div");
+        cardElement.classList.add("pro");
+        cardElement.setAttribute("data-id", card.id);
+        cardElement.innerHTML = `
+            <img src="${card.image_url}" alt="${card.name}">
+            <div class="des">
+                <span>Magic the Gathering</span>
+                <h5>${card.name}</h5>
+                <div class="star">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <h4>$${card.price}</h4>
+            </div>
+            <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+        `;
+        cardElement.addEventListener("click", () => {
+            window.location.href = `sproduct.html?id=${card.id}`;
+        });
+        container.appendChild(cardElement);
+    });
+});*/
+
+//  
 
 if(bar){
     bar.addEventListener('click', () => {
@@ -14,7 +148,7 @@ if(close){
     })
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+/*document.addEventListener("DOMContentLoaded", function () {
     // Add click event to each product to navigate to sproduct.html
     document.querySelectorAll(".pro").forEach(product => {
         product.addEventListener("click", function() {
@@ -24,10 +158,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
-});
+});*/
 
 
-document.addEventListener("DOMContentLoaded", function () {
+/*document.addEventListener("DOMContentLoaded", function () {
     // Handle navigation from shop.html and index.html to sproduct.html
     document.querySelectorAll(".pro").forEach(product => {
         product.addEventListener("click", function() {
@@ -161,7 +295,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-});
+});*/
 
 document.addEventListener("DOMContentLoaded", function () {
     const mainImage = document.getElementById("product-image");
@@ -176,4 +310,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 // Load product details when the page loads
-window.onload = displayProductDetails;
+//window.onload = displayProductDetails;
