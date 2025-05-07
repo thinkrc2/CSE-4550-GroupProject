@@ -1157,4 +1157,10 @@ footer a:hover{
     #prodetails .single-pro-details{
         width: 100%;
     }
+
+    #pagination .page-link.active {
+        background-color: #f1f1f8;
+        color: #088178;
+        border: 1px solid #088178;
+    }
 }
