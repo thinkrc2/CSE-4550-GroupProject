@@ -51,11 +51,40 @@ document.addEventListener("DOMContentLoaded", async function () {
                     </div>
                     <h4>$${card.price}</h4>
                 </div>
-                <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                <button class="cart-btn" data-id="${card.id}" style="all: unset; position: absolute; bottom: 20px; right: 10px; cursor: pointer;">
+                    <i class="fal fa-shopping-cart cart"></i>
+                </button>
             `;
+            // Clicking the main card opens product page
             cardElement.addEventListener("click", () => {
                 window.location.href = `sproduct.html?id=${card.id}`;
             });
+
+            // 🛒 Clicking the cart icon adds to cart (without navigating)
+            const cartBtn = cardElement.querySelector(".cart-btn");
+            cartBtn.addEventListener("click", (e) => {
+                e.stopPropagation(); // Prevent card click
+                e.preventDefault();
+
+                const cart = JSON.parse(localStorage.getItem("cart")) || [];
+                const existing = cart.find(p => p.id === card.id);
+
+                if (existing) {
+                    existing.quantity += 1;
+                } else {
+                    cart.push({
+                        id: card.id,
+                        name: card.name,
+                        price: card.price,
+                        image: imageUrl,
+                        quantity: 1
+                    });
+                }
+
+                localStorage.setItem("cart", JSON.stringify(cart));
+                alert(`${card.name} added to cart!`);
+            });
+
             container.appendChild(cardElement);
         });
     }
@@ -108,11 +137,41 @@ document.addEventListener("DOMContentLoaded", async function () {
                         </div>
                         <h4>$${card.price}</h4>
                     </div>
-                    <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
-                `;
+                    <button class="cart-btn" data-id="${card.id}" style="all: unset; position: absolute; bottom: 20px; right: 10px; cursor: pointer;">
+                        <i class="fal fa-shopping-cart cart"></i>
+                    </button>
+                    `;
+
+                // 👉 Clicking the whole card takes you to product detail
                 cardDiv.addEventListener("click", () => {
                     window.location.href = `sproduct.html?id=${card.id}`;
                 });
+
+                // 👉 Clicking the cart icon only adds to cart
+                const cartBtn = cardDiv.querySelector(".cart-btn");
+                cartBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+
+                    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+                    const existing = cart.find(p => p.id === card.id);
+
+                    if (existing) {
+                        existing.quantity += 1;
+                    } else {
+                        cart.push({
+                            id: card.id,
+                            name: card.name,
+                            price: card.price,
+                            image: imageUrl,
+                            quantity: 1
+                        });
+                    }
+
+                    localStorage.setItem("cart", JSON.stringify(cart));
+                    alert(`${card.name} added to cart!`);
+                });
+
                 productList.appendChild(cardDiv);
             });
 
@@ -367,7 +426,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                         return;
                     }
                 }
-                
+
                 const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
                 if (cart.length === 0) {
