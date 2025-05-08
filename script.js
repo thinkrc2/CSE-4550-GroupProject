@@ -135,4 +135,80 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         loadPage(currentPage);
     }
+
+    //SProduct Logic
+    const productName = document.getElementById("product-name");
+    const productPrice = document.getElementById("product-price");
+    const productDescription = document.getElementById("product-description");
+    const productImage = document.getElementById("product-image");
+
+    if (productName && productPrice && productDescription && productImage) {
+        const params = new URLSearchParams(window.location.search);
+        const cardId = params.get("id");
+
+        if (!cardId) {
+            console.error("No card ID found in URL.");
+            return;
+        }
+
+        console.log("Fetching card with ID:", cardId);
+
+        const { data: card, error } = await supabase
+            .from("cards")
+            .select("*")
+            .eq("id", cardId)
+            .single();
+
+        if (error || !card) {
+            console.error("Failed to fetch card:", error?.message || "No data returned.");
+            productName.textContent = "Card not found.";
+            return;
+        }
+
+        const imageUrl = card.cardimageurl || "img/default.jpg";
+        productName.textContent = card.name;
+        productPrice.textContent = `$${card.price}`;
+        productDescription.textContent = card.description || "No description available.";
+        productImage.src = imageUrl;
+        productImage.alt = card.name;
+
+        // ✅ Featured cards (excluding current)
+        const featuredContainer = document.querySelector("#product1 .pro-container");
+        if (featuredContainer && cardId) {
+            const { data: featuredCards, error: featuredError } = await supabase
+                .from("cards")
+                .select("*")
+                .neq("id", cardId)
+                .limit(4);
+
+            if (featuredError) {
+                console.error("Error fetching featured cards:", featuredError.message);
+            } else {
+                featuredCards.forEach(featured => {
+                    const imageUrl = featured.cardimageurl || "img/default.jpg";
+                    const cardElement = document.createElement("div");
+                    cardElement.classList.add("pro");
+                    cardElement.setAttribute("data-id", featured.id);
+                    cardElement.innerHTML = `
+                        <img src="${imageUrl}" alt="${featured.name}">
+                        <div class="des">
+                            <span>Magic the Gathering</span>
+                            <h5>${featured.name}</h5>
+                            <div class="star">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h4>$${featured.price}</h4>
+                        </div>
+                        <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                    `;
+                    cardElement.addEventListener("click", () => {
+                        window.location.href = `sproduct.html?id=${featured.id}`;
+                    });
+                    featuredContainer.appendChild(cardElement);
+                });
+            }
+        }
+    }
 });
