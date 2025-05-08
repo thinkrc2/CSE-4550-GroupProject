@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (container) {
         console.log("Loading featured cards for homepage...");
 
-        const { data: cards, error } = await supabase.from('cards').select('*').limit(8);
+        const { data: cards, error } = await supabase.from('cards').select('*').gt('quantity', 0).limit(8);
 
         if (error) {
             console.error("Supabase error:", error.message);
@@ -79,6 +79,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             const { data: cards, error, count } = await supabase
                 .from("cards")
                 .select("*", { count: "exact" })
+                .gt("quantity", 0)
                 .range(start, end);
 
             console.log("Supabase result:", cards, error, count);
@@ -155,6 +156,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             .from("cards")
             .select("*")
             .eq("id", cardId)
+            .gt("quantity", 0)
             .single();
 
         const card = result.data;
@@ -216,6 +218,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 .from("cards")
                 .select("*")
                 .neq("id", cardId)
+                .gt("quantity", 0)
                 .limit(4);
 
             if (!featuredError && featuredCards) {
@@ -399,7 +402,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 alert("✅ Order placed successfully!");
 
                 // Optional redirect
-                // window.location.href = "thankyou.html";
+                 window.location.href = "index.html";
             });
         }
 
