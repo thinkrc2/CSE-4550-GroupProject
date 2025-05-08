@@ -16,6 +16,7 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 document.addEventListener("DOMContentLoaded", async function () {
+    console.log("✅ DOM fully loaded");
     const container = document.getElementById("card-container"); // homepage
     const productList = document.getElementById("product-list"); // shop page
     const paginationLinks = document.getElementById("pagination-links");
@@ -136,7 +137,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         loadPage(currentPage);
     }
 
-    //SProduct Logic
     const productName = document.getElementById("product-name");
     const productPrice = document.getElementById("product-price");
     const productDescription = document.getElementById("product-description");
@@ -151,13 +151,14 @@ document.addEventListener("DOMContentLoaded", async function () {
             return;
         }
 
-        console.log("Fetching card with ID:", cardId);
-
-        const { data: card, error } = await supabase
+        const result = await supabase
             .from("cards")
             .select("*")
             .eq("id", cardId)
             .single();
+
+        const card = result.data;
+        const error = result.error;
 
         if (error || !card) {
             console.error("Failed to fetch card:", error?.message || "No data returned.");
@@ -172,43 +173,138 @@ document.addEventListener("DOMContentLoaded", async function () {
         productImage.src = imageUrl;
         productImage.alt = card.name;
 
-        // ✅ Featured cards (excluding current)
+        // ✅ Now that card is available, set up "Add to Cart"
+        const addToCartBtn = document.querySelector("button.normal");
+        const qtyInput = document.querySelector(".single-pro-details input");
+
+        console.log("Cart button:", addToCartBtn);
+        console.log("Qty input:", qtyInput);
+
+        if (addToCartBtn && qtyInput) {
+            console.log("✅ Add to Cart button found");
+
+            addToCartBtn.addEventListener("click", () => {
+                console.log("🛒 Button clicked!");
+
+                const qty = parseInt(qtyInput.value) || 1;
+                const cart = JSON.parse(localStorage.getItem("cart")) || [];
+                const existing = cart.find(p => p.id === card.id);
+
+                if (existing) {
+                    existing.quantity += qty;
+                } else {
+                    cart.push({
+                        id: card.id,
+                        name: card.name,
+                        price: card.price,
+                        image: imageUrl,
+                        quantity: qty
+                    });
+                }
+
+                console.log("📦 Adding to cart:", cart);
+
+                localStorage.setItem("cart", JSON.stringify(cart));
+                alert(`${card.name} added to cart!`);
+            });
+        }
+
+        // ✅ Featured Products (unchanged)
         const featuredContainer = document.querySelector("#product1 .pro-container");
-        if (featuredContainer && cardId) {
+        if (featuredContainer) {
             const { data: featuredCards, error: featuredError } = await supabase
                 .from("cards")
                 .select("*")
                 .neq("id", cardId)
                 .limit(4);
 
-            if (featuredError) {
-                console.error("Error fetching featured cards:", featuredError.message);
-            } else {
+            if (!featuredError && featuredCards) {
                 featuredCards.forEach(featured => {
-                    const imageUrl = featured.cardimageurl || "img/default.jpg";
-                    const cardElement = document.createElement("div");
-                    cardElement.classList.add("pro");
-                    cardElement.setAttribute("data-id", featured.id);
-                    cardElement.innerHTML = `
-                        <img src="${imageUrl}" alt="${featured.name}">
+                    const img = featured.cardimageurl || "img/default.jpg";
+                    const div = document.createElement("div");
+                    div.classList.add("pro");
+                    div.innerHTML = `
+                        <img src="${img}" alt="${featured.name}">
                         <div class="des">
                             <span>Magic the Gathering</span>
                             <h5>${featured.name}</h5>
                             <div class="star">
                                 <i class="fas fa-star"></i><i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i><i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                             </div>
                             <h4>$${featured.price}</h4>
                         </div>
                         <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
                     `;
-                    cardElement.addEventListener("click", () => {
+                    div.addEventListener("click", () => {
                         window.location.href = `sproduct.html?id=${featured.id}`;
                     });
-                    featuredContainer.appendChild(cardElement);
+                    featuredContainer.appendChild(div);
                 });
             }
         }
+    }
+
+    //Cart page Logic
+    // ✅ Cart Page
+    const cartBody = document.getElementById("cart-body");
+    const subtotalDisplay = document.querySelector("#subtotal table");
+
+    if (cartBody) {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        if (cart.length === 0) {
+            cartBody.innerHTML = "<tr><td colspan='6'>Your cart is empty.</td></tr>";
+            if (subtotalDisplay) subtotalDisplay.innerHTML = `<tr><td>Total</td><td>$0</td></tr>`;
+            return;
+        }
+
+        let total = 0;
+        cartBody.innerHTML = "";
+        cart.forEach(item => {
+            const row = document.createElement("tr");
+            const itemTotal = item.quantity * item.price;
+            total += itemTotal;
+            row.innerHTML = `
+                <td><a href="#" class="remove-item" data-id="${item.id}"><i class="far fa-times-circle"></i></a></td>
+                <td><img src="${item.image}" alt="${item.name}"></td>
+                <td>${item.name}</td>
+                <td>$${item.price}</td>
+                <td><input type="number" class="cart-qty" data-id="${item.id}" value="${item.quantity}" min="1"></td>
+                <td>$${itemTotal}</td>
+            `;
+            cartBody.appendChild(row);
+        });
+
+        if (subtotalDisplay) {
+            subtotalDisplay.innerHTML = `
+                <tr><td>Cart Subtotal</td><td>$${total}</td></tr>
+                <tr><td>Shipping</td><td>Free</td></tr>
+                <tr><td><strong>Total</strong></td><td><strong>$${total}</strong></td></tr>
+            `;
+        }
+
+        document.querySelectorAll(".cart-qty").forEach(input => {
+            input.addEventListener("change", (e) => {
+                const id = parseInt(e.target.dataset.id);
+                const newQty = parseInt(e.target.value);
+                const cart = JSON.parse(localStorage.getItem("cart")) || [];
+                const item = cart.find(p => p.id === id);
+                if (item) {
+                    item.quantity = newQty;
+                    localStorage.setItem("cart", JSON.stringify(cart));
+                    location.reload();
+                }
+            });
+        });
+
+        document.querySelectorAll(".remove-item").forEach(link => {
+            link.addEventListener("click", (e) => {
+                e.preventDefault();
+                const id = parseInt(link.dataset.id);
+                const newCart = cart.filter(p => p.id !== id);
+                localStorage.setItem("cart", JSON.stringify(newCart));
+                location.reload();
+            });
+        });
     }
 });

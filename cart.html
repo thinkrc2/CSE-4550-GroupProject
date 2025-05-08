@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
 
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
     <section id="header">
@@ -47,51 +48,16 @@
                     <td>Subtotal</td>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td><a href="#"><i class="far fa-times-circle"></i></a></td>
-                    <td><img src="img\MTG\mat-1-coppercoat-vanguard.jpg" alt=""></td>
-                    <td>Coppercoat Vanguard</td>
-                    <td>$19</td>
-                    <td><input type="number" value="1"></td>
-                    <td>$19</td>
-                </tr>
-                <tr>
-                    <td><a href="#"><i class="far fa-times-circle"></i></a></td>
-                    <td><img src="img\MTG\mat-2-deification.jpg" alt=""></td>
-                    <td>Deification</td>
-                    <td>$19</td>
-                    <td><input type="number" value="1"></td>
-                    <td>$19</td>
-                </tr>
-                <tr>
-                    <td><a href="#"><i class="far fa-times-circle"></i></a></td>
-                    <td><img src="img\MTG\mat-3-harnessed-snubhorn.jpg" alt=""></td>
-                    <td>Harnessed Snubhorn</td>
-                    <td>$19</td>
-                    <td><input type="number" value="1"></td>
-                    <td>$19</td>
-                </tr>
+            <tbody id="cart-body">
+                
             </tbody>
         </table>
     </section>
 
     <section id="cart-add" class="section-p1">
-        <div id="subtotal">
+        <div id="subtotal" class="section-p1">
             <h3>Cart Total</h3>
             <table>
-                <tr>
-                    <td>Cart Subtotal</td>
-                    <td>$57</td>
-                </tr>
-                <tr>
-                    <td>Shipping</td>
-                    <td>Free</td>
-                </tr>
-                <tr>
-                    <td><strong>Total</strong></td>
-                    <td><strong>$57</strong></td>
-                </tr>
             </table>
             <button class="normal"><a href="checkout.html">Proceed to Checkout</a></button>
         </div>
