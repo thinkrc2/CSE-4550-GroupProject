@@ -359,6 +359,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         if (placeOrderBtn) {
             placeOrderBtn.addEventListener("click", async () => {
+                const inputs = document.querySelectorAll(".required-input");
+                for (let input of inputs){
+                    if(!input.value.trim()){
+                        alert("Please fill out all required fields before placing your order.");
+                        input.focus();
+                        return;
+                    }
+                }
+                
                 const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
                 if (cart.length === 0) {
