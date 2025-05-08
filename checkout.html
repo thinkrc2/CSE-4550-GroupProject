@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
 
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
     <section id="header">
@@ -45,28 +46,7 @@
                     <td>Subtotal</td>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td><img src="img\MTG\mat-1-coppercoat-vanguard.jpg" alt=""></td>
-                    <td>Coppercoat Vanguard</td>
-                    <td>$19</td>
-                    <td>1</td>
-                    <td>$19</td>
-                </tr>
-                <tr>
-                    <td><img src="img\MTG\mat-2-deification.jpg" alt=""></td>
-                    <td>Deification</td>
-                    <td>$19</td>
-                    <td>1</td>
-                    <td>$19</td>
-                </tr>
-                <tr>
-                    <td><img src="img\MTG\mat-3-harnessed-snubhorn.jpg" alt=""></td>
-                    <td>Harnessed Snubhorn</td>
-                    <td>$19</td>
-                    <td>1</td>
-                    <td>$19</td>
-                </tr>
+            <tbody id="checkout-body">
             </tbody>
         </table>
     </section>
@@ -131,8 +111,7 @@
                     <span>Expiration Date (Format: xx/xx)</span>
                 </div>
                 <div class="inputBox">
-                    <button type="submit">Place Order</button>
-                    <!--<button class="normal">Place Order</button>-->
+                    <button type="button" id="place-order-btn">Place Order</button>
                 </div>
             </div>
         </div>

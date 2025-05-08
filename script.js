@@ -307,4 +307,101 @@ document.addEventListener("DOMContentLoaded", async function () {
             });
         });
     }
+
+    // ✅ Checkout Page Logic
+    const checkoutBody = document.getElementById("checkout-body");
+    const checkoutSubtotal = document.querySelector("#checkoutTable table");
+
+    if (checkoutBody) {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        if (cart.length === 0) {
+            checkoutBody.innerHTML = "<tr><td colspan='5'>Your cart is empty.</td></tr>";
+            if (checkoutSubtotal) {
+                checkoutSubtotal.innerHTML = `
+                    <tr><td>Cart Subtotal</td><td>$0</td></tr>
+                    <tr><td>Shipping</td><td>Free</td></tr>
+                    <tr><td><strong>Total</strong></td><td><strong>$0</strong></td></tr>
+                `;
+            }
+            return;
+        }
+
+        let total = 0;
+
+        cart.forEach(item => {
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td><img src="${item.image}" alt="${item.name}"></td>
+                <td>${item.name}</td>
+                <td>$${item.price}</td>
+                <td>${item.quantity}</td>
+                <td>$${itemTotal}</td>
+            `;
+            checkoutBody.appendChild(row);
+        });
+
+        if (checkoutSubtotal) {
+            checkoutSubtotal.innerHTML = `
+                <tr><td>Cart Subtotal</td><td>$${total}</td></tr>
+                <tr><td>Shipping</td><td>Free</td></tr>
+                <tr><td><strong>Total</strong></td><td><strong>$${total}</strong></td></tr>
+            `;
+        }
+
+        const placeOrderBtn = document.getElementById("place-order-btn");
+
+        if (placeOrderBtn) {
+            placeOrderBtn.addEventListener("click", async () => {
+                const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+                if (cart.length === 0) {
+                    alert("Your cart is empty.");
+                    return;
+                }
+
+                for (const item of cart) {
+                    // Get current quantity
+                    const { data: current, error: fetchError } = await supabase
+                        .from("cards")
+                        .select("quantity")
+                        .eq("id", item.id)
+                        .single();
+
+                    if (fetchError) {
+                        alert(`Error retrieving ${item.name}: ${fetchError.message}`);
+                        return;
+                    }
+
+                    const newQty = current.quantity - item.quantity;
+                    if (newQty < 0) {
+                        alert(`Not enough stock for ${item.name}.`);
+                        return;
+                    }
+
+                    // Update quantity in database
+                    const { error: updateError } = await supabase
+                        .from("cards")
+                        .update({ quantity: newQty })
+                        .eq("id", item.id);
+
+                    if (updateError) {
+                        alert(`Error updating ${item.name}: ${updateError.message}`);
+                        return;
+                    }
+                }
+
+                // Clear the cart and show confirmation
+                localStorage.removeItem("cart");
+                alert("✅ Order placed successfully!");
+
+                // Optional redirect
+                // window.location.href = "thankyou.html";
+            });
+        }
+
+    }
 });
