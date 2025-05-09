@@ -96,30 +96,46 @@ document.addEventListener("DOMContentLoaded", async function () {
         const productsPerPage = 12;
         let currentPage = 1;
 
-        async function loadPage(page) {
+        const params = new URLSearchParams(window.location.search);
+        const searchTerm = params.get("search") || "";
+
+
+        async function loadPage(page, searchTerm = "") {
             const start = (page - 1) * productsPerPage;
             const end = start + productsPerPage - 1;
-
+        
             console.log("Querying cards with range:", start, end);
-
+        
             productList.innerHTML = "<p>Loading...</p>";
             paginationLinks.innerHTML = "";
-
-            const { data: cards, error, count } = await supabase
+        
+            let query = supabase
                 .from("cards")
                 .select("*", { count: "exact" })
-                .gt("quantity", 0)
-                .range(start, end);
-
+                .gt("quantity", 0);
+        
+            if (searchTerm) {
+                query = query.ilike("name", `%${searchTerm}%`);
+            }
+        
+            query = query.range(start, end);
+        
+            const { data: cards, error, count } = await query;
+        
             console.log("Supabase result:", cards, error, count);
-
+        
             if (error) {
                 console.error("Error fetching cards:", error.message);
                 productList.innerHTML = "<p style='color:red;'>Failed to load cards.</p>";
                 return;
             }
-
+        
             productList.innerHTML = "";
+
+            if (cards.length === 0) {
+                productList.innerHTML = "<p>No cards found matching your search.</p>";
+                return;
+              }
             cards.forEach(card => {
                 const imageUrl = card.cardimageurl || 'img/default.jpg';
                 const cardDiv = document.createElement("div");
@@ -140,22 +156,20 @@ document.addEventListener("DOMContentLoaded", async function () {
                     <button class="cart-btn" data-id="${card.id}" style="all: unset; position: absolute; bottom: 20px; right: 10px; cursor: pointer;">
                         <i class="fal fa-shopping-cart cart"></i>
                     </button>
-                    `;
-
-                // 👉 Clicking the whole card takes you to product detail
+                `;
+        
                 cardDiv.addEventListener("click", () => {
                     window.location.href = `sproduct.html?id=${card.id}`;
                 });
-
-                // 👉 Clicking the cart icon only adds to cart
+        
                 const cartBtn = cardDiv.querySelector(".cart-btn");
                 cartBtn.addEventListener("click", (e) => {
                     e.stopPropagation();
                     e.preventDefault();
-
+        
                     const cart = JSON.parse(localStorage.getItem("cart")) || [];
                     const existing = cart.find(p => p.id === card.id);
-
+        
                     if (existing) {
                         existing.quantity += 1;
                     } else {
@@ -167,15 +181,14 @@ document.addEventListener("DOMContentLoaded", async function () {
                             quantity: 1
                         });
                     }
-
+        
                     localStorage.setItem("cart", JSON.stringify(cart));
                     alert(`${card.name} added to cart!`);
                 });
-
+        
                 productList.appendChild(cardDiv);
             });
-
-            // Pagination links
+        
             const totalPages = Math.ceil(count / productsPerPage);
             for (let i = 1; i <= totalPages; i++) {
                 const pageLink = document.createElement("a");
@@ -183,18 +196,18 @@ document.addEventListener("DOMContentLoaded", async function () {
                 pageLink.classList.add("page-link");
                 pageLink.textContent = i;
                 if (i === page) pageLink.classList.add("active");
-
+        
                 pageLink.addEventListener("click", (e) => {
                     e.preventDefault();
                     currentPage = i;
-                    loadPage(currentPage);
+                    loadPage(currentPage, searchTerm); // <- Pass search term!
                 });
-
+        
                 paginationLinks.appendChild(pageLink);
             }
-        }
+        }        
 
-        loadPage(currentPage);
+        loadPage(currentPage, searchTerm);
     }
 
     const productName = document.getElementById("product-name");
@@ -475,4 +488,31 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
     }
+
+    // ✅ Search bar logic (for index.html)
+    const searchForm = document.getElementById("search-form");
+    const searchInput = document.getElementById("search-input");
+
+    if (searchForm && searchInput) {
+        searchForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const query = searchInput.value.trim();
+            if (query) {
+                window.location.href = `shop.html?search=${encodeURIComponent(query)}`;
+            }
+        });
+    }
+
+    // ✅ Search toggle icon logic
+    const searchToggle = document.getElementById("search-toggle");
+    const searchFormEl = document.getElementById("search-form");
+
+    if (searchToggle && searchFormEl) {
+        searchToggle.addEventListener("click", () => {
+            searchFormEl.classList.toggle("show");
+            const input = document.getElementById("search-input");
+            if (input) input.focus();
+        });
+    }
+
 });
