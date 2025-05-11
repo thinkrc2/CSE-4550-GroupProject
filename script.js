@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const productList = document.getElementById("product-list"); // shop page
     const paginationLinks = document.getElementById("pagination-links");
 
-    // ✅ Homepage logic
+    // Homepage logic
     if (container) {
         console.log("Loading featured cards for homepage...");
 
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     }
 
-    // ✅ Shop page logic with pagination
+    // Shop page logic with pagination
     if (productList && paginationLinks) {
         console.log("Found product list and pagination. Initializing...");
 
@@ -247,7 +247,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         productImage.src = imageUrl;
         productImage.alt = card.name;
 
-        // ✅ Now that card is available, set up "Add to Cart"
+        // Now that card is available, set up "Add to Cart"
         const addToCartBtn = document.querySelector("button.normal");
         const qtyInput = document.querySelector(".single-pro-details input");
 
@@ -255,7 +255,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.log("Qty input:", qtyInput);
 
         if (addToCartBtn && qtyInput) {
-            console.log("✅ Add to Cart button found");
+            console.log("Add to Cart button found");
 
             addToCartBtn.addEventListener("click", () => {
                 console.log("🛒 Button clicked!");
@@ -283,7 +283,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             });
         }
 
-        // ✅ Featured Products (unchanged)
+        //Featured Products (unchanged)
         const featuredContainer = document.querySelector("#product1 .pro-container");
         if (featuredContainer) {
             const { data: featuredCards, error: featuredError } = await supabase
@@ -321,7 +321,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     //Cart page Logic
-    // ✅ Cart Page
+    //Cart Page
     const cartBody = document.getElementById("cart-body");
     const subtotalDisplay = document.querySelector("#subtotal table");
 
@@ -383,7 +383,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     }
 
-    // ✅ Checkout Page Logic
+    //Checkout Page Logic
     const checkoutBody = document.getElementById("checkout-body");
     const checkoutSubtotal = document.querySelector("#checkoutTable table");
 
@@ -480,7 +480,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 // Clear the cart and show confirmation
                 localStorage.removeItem("cart");
-                alert("✅ Order placed successfully!");
+                alert("Order placed successfully!");
 
                 // Optional redirect
                  window.location.href = "index.html";
@@ -489,7 +489,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     }
 
-    // ✅ Search bar logic (for index.html)
+    //Search bar logic (for index.html)
     const searchForm = document.getElementById("search-form");
     const searchInput = document.getElementById("search-input");
 
@@ -503,7 +503,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     }
 
-    // ✅ Search toggle icon logic
+    //Search toggle icon logic
     const searchToggle = document.getElementById("search-toggle");
     const searchFormEl = document.getElementById("search-form");
 
