@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
 
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
     <section id="header">
@@ -21,6 +22,14 @@
                 <li><a href="contact.html">Contact</a></li>
                 <li><a href="loginupgraded.html">Sign-In</a></li>
                 <li id="lg-bag"><a href="cart.html"><i class="far fa-shopping-bag"></i></a></li>
+                <li>
+                    <div id="search-wrapper">
+                      <button id="search-toggle"><i class="fas fa-search"></i></button>
+                      <form id="search-form">
+                        <input type="text" id="search-input" placeholder="Search cards..." />
+                      </form>
+                    </div>
+                  </li>
                 <a href="#" id="close"><i class="far fa-times"></i></a>
             </ul>
         </div>
