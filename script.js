@@ -1,179 +1,555 @@
+// Navigation toggle
 const bar = document.getElementById('bar');
 const close = document.getElementById('close');
 const nav = document.getElementById('navbar');
+if (bar) bar.addEventListener('click', () => nav.classList.add('active'));
+if (close) close.addEventListener('click', () => nav.classList.remove('active'));
 
-if(bar){
-    bar.addEventListener('click', () => {
-        nav.classList.add('active');
-    })
-}
+const supabase = window.supabaseClient;
 
-if(close){
-    close.addEventListener('click', () => {
-        nav.classList.remove('active');
-    })
-}
+// swap Sign-In for Welcome + Logout
+async function updateNavForUser() {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const navbar = document.getElementById('navbar');
 
-document.addEventListener("DOMContentLoaded", function () {
-    // Add click event to each product to navigate to sproduct.html
-    document.querySelectorAll(".pro").forEach(product => {
-        product.addEventListener("click", function() {
-            const productId = this.getAttribute("data-id");
-            if(productId){
-                window.location.href = `sproduct.html?id=${productId}`;
-            }
-        });
-    });
-});
-
-
-document.addEventListener("DOMContentLoaded", function () {
-    // Handle navigation from shop.html and index.html to sproduct.html
-    document.querySelectorAll(".pro").forEach(product => {
-        product.addEventListener("click", function() {
-            const productId = this.getAttribute("data-id");
-            if (productId) {
-                window.location.href = `sproduct.html?id=${productId}`;
-            }
-        });
-    });
-
-    // Function to display product details in sproduct.html
-    function getProductIdFromUrl() {
-        const params = new URLSearchParams(window.location.search);
-        return params.get("id");
+  if (!session?.user) {
+    if (!navbar.querySelector('a[href="loginupgraded.html"]')) {
+      const li = document.createElement('li');
+      li.innerHTML = `<a href="loginupgraded.html">Sign-In</a>`;
+      navbar.insertBefore(li, navbar.querySelector('#lg-bag'));
     }
+    return;
+  }
 
-    function displayProductDetails() {
-        const products = [
-            { id: "1", name: "Coppercoat Vanguard", price: "$19", image: "img/MTG/mat-1-coppercoat-vanguard.jpg", description: "A strong card for your collection." },
-            { id: "2", name: "Deification", price: "$25", image: "img/MTG/mat-2-deification.jpg", description: "A powerful enchantment to boost your deck." },
-            { id: "3", name: "Harnessed Snubhorn", price: "$15", image: "img/MTG/mat-3-harnessed-snubhorn.jpg", description: "A resilient creature with great abilities." },
-            { id: "4", name: "Metropolis Reformer", price: "$19", image: "img/MTG/mat-4-metropolis-reformer.jpg", description: "A resilient creature with great abilities." },
-            { id: "5", name: "Spark Rupture", price: "$19", image: "img/MTG/mat-5-spark-rupture.jpg", description: "A resilient creature with great abilities." },
-            { id: "6", name: "Tazri, Stalwart Survivor", price: "$19", image: "img/MTG/mat-6-tazri-stalwart-survivor.jpg", description: "A resilient creature with great abilities." },
-            { id: "7", name: "Filter Out", price: "$19", image: "img/MTG/mat-7-filter-out.jpg", description: "A resilient creature with great abilities." },
-            { id: "8", name: "Tolarian Contempt", price: "$19", image: "img/MTG/mat-8-tolarian-contempt.jpg", description: "A resilient creature with great abilities." },
-            { id: "9", name: "Training Grounds", price: "$19", image: "img/MTG/mat-9-training-grounds.jpg", description: "A resilient creature with great abilities." },
-            { id: "10", name: "Vesuvan Drifter", price: "$19", image: "img/MTG/mat-10-vesuvan-drifter.jpg", description: "A resilient creature with great abilities." },
-            { id: "11", name: "Ayara's Oathsworn", price: "$19", image: "img/MTG/mat-11-ayara-s-oathsworn.jpg", description: "A resilient creature with great abilities." },
-            { id: "12", name: "Blot Out", price: "$19", image: "img/MTG/mat-12-blot-out.jpg", description: "A resilient creature with great abilities." },
-            { id: "13", name: "Death-Rattle Oni Out", price: "$19", image: "img/MTG/mat-13-death-rattle-oni.jpg", description: "A resilient creature with great abilities." },
-            { id: "14", name: "Markov Baron Out", price: "$19", image: "img/MTG/mat-14-markov-baron.jpg", description: "A resilient creature with great abilities." },
-            { id: "15", name: "Urborg Scavengers", price: "$19", image: "img/MTG/mat-15-urborg-scavengers.jpg", description: "A resilient creature with great abilities." },
-            { id: "16", name: "Arni Metalbrow", price: "$19", image: "img/MTG/mat-16-arni-metalbrow.jpg", description: "A resilient creature with great abilities." }
-        ];
+  const signInLi = navbar.querySelector(
+    'a[href="loginupgraded.html"]'
+  )?.parentElement;
+  if (signInLi) signInLi.remove();
 
-        const productId = getProductIdFromUrl();
-        const product = products.find(p => p.id === productId);
+  const { data: profile, error } = await supabase
+    .from('profiles')
+    .select('username')
+    .eq('id', session.user.id)
+    .single();
+  if (error || !profile) return console.error('Profile load error:', error);
 
-        if (product) {
-            document.getElementById("product-image").src = product.image;
-            document.getElementById("product-name").textContent = product.name;
-            document.getElementById("product-price").textContent = product.price;
-            document.getElementById("product-description").textContent = product.description;
-        } else {
-            document.getElementById("prodetails").innerHTML = "<h2>Product not found</h2>";
+  const li = document.createElement('li');
+  li.id = 'user-menu';
+  li.innerHTML = `
+    <span class="welcome">Welcome, ${profile.username}</span>
+    <button id="logout-btn">Log Out</button>
+  `;
+  navbar.insertBefore(li, navbar.querySelector('#lg-bag'));
+
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    window.location.reload();
+  });
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await updateNavForUser();
+  supabase.auth.onAuthStateChange(() => updateNavForUser());
+
+  console.log('✅ DOM fully loaded');
+    const container = document.getElementById("card-container"); // homepage
+    const productList = document.getElementById("product-list"); // shop page
+    const paginationLinks = document.getElementById("pagination-links");
+
+    // Homepage logic
+    if (container) {
+        console.log("Loading featured cards for homepage...");
+
+        const { data: cards, error } = await supabase.from('cards').select('*').gt('quantity', 0).limit(8);
+
+        if (error) {
+            console.error("Supabase error:", error.message);
+            container.innerHTML = "<p style='color:red;'>Failed to load cards.</p>";
+            return;
         }
+
+        container.innerHTML = "";
+        cards.forEach(card => {
+            const imageUrl = card.cardimageurl || 'img/default.jpg';
+            const cardElement = document.createElement("div");
+            cardElement.classList.add("pro");
+            cardElement.setAttribute("data-id", card.id);
+            cardElement.innerHTML = `
+                <img src="${imageUrl}" alt="${card.name}">
+                <div class="des">
+                    <span>Magic the Gathering</span>
+                    <h5>${card.name}</h5>
+                    <div class="star">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h4>$${card.price}</h4>
+                </div>
+                <button class="cart-btn" data-id="${card.id}" style="all: unset; position: absolute; bottom: 20px; right: 10px; cursor: pointer;">
+                    <i class="fal fa-shopping-cart cart"></i>
+                </button>
+            `;
+            // Clicking the main card opens product page
+            cardElement.addEventListener("click", () => {
+                window.location.href = `sproduct.html?id=${card.id}`;
+            });
+
+            // 🛒 Clicking the cart icon adds to cart (without navigating)
+            const cartBtn = cardElement.querySelector(".cart-btn");
+            cartBtn.addEventListener("click", (e) => {
+                e.stopPropagation(); // Prevent card click
+                e.preventDefault();
+
+                const cart = JSON.parse(localStorage.getItem("cart")) || [];
+                const existing = cart.find(p => p.id === card.id);
+
+                if (existing) {
+                    existing.quantity += 1;
+                } else {
+                    cart.push({
+                        id: card.id,
+                        name: card.name,
+                        price: card.price,
+                        image: imageUrl,
+                        quantity: 1
+                    });
+                }
+
+                localStorage.setItem("cart", JSON.stringify(cart));
+                alert(`${card.name} added to cart!`);
+            });
+
+            container.appendChild(cardElement);
+        });
     }
 
-    // Check if we're on sproduct.html
-    if (document.getElementById("product-image")) {
-        displayProductDetails();
-    }
+    // Shop page logic with pagination
+    if (productList && paginationLinks) {
+        console.log("Found product list and pagination. Initializing...");
 
-    // Product data
-
-    if (document.getElementById("product-list")) {
-        const products = [
-            { id: 1, name: "Coppercoat Vanguard", price: "$19", image: "img/MTG/mat-1-coppercoat-vanguard.jpg", description: "A strong card for your collection." },
-            { id: 2, name: "Deification", price: "$19", image: "img/MTG/mat-2-deification.jpg", description: "A powerful enchantment to boost your deck." },
-            { id: 3, name: "Harnessed Snubhorn", price: "$19", image: "img/MTG/mat-3-harnessed-snubhorn.jpg", description: "A resilient creature with great abilities." },
-            { id: 4, name: "Metropolis Reformer", price: "$19", image: "img/MTG/mat-4-metropolis-reformer.jpg", description: "A resilient creature with great abilities." },
-            { id: 5, name: "Spark Rupture", price: "$19", image: "img/MTG/mat-5-spark-rupture.jpg", description: "A resilient creature with great abilities." },
-            { id: 6, name: "Tazri, Stalwart Survivor", price: "$19", image: "img/MTG/mat-6-tazri-stalwart-survivor.jpg", description: "A resilient creature with great abilities." },
-            { id: 7, name: "Filter Out", price: "$19", image: "img/MTG/mat-7-filter-out.jpg", description: "A resilient creature with great abilities." },
-            { id: 8, name: "Tolarian Contempt", price: "$19", image: "img/MTG/mat-8-tolarian-contempt.jpg", description: "A resilient creature with great abilities." },
-            { id: 9, name: "Training Grounds", price: "$19", image: "img/MTG/mat-9-training-grounds.jpg", description: "A resilient creature with great abilities." },
-            { id: 10, name: "Vesuvan Drifter", price: "$19", image: "img/MTG/mat-10-vesuvan-drifter.jpg", description: "A resilient creature with great abilities." },
-            { id: 11, name: "Ayara's Oathsworn", price: "$19", image: "img/MTG/mat-11-ayara-s-oathsworn.jpg", description: "A resilient creature with great abilities." },
-            { id: 12, name: "Blot Out", price: "$19", image: "img/MTG/mat-12-blot-out.jpg", description: "A resilient creature with great abilities." },
-            { id: 13, name: "Death-Rattle Oni Out", price: "$19", image: "img/MTG/mat-13-death-rattle-oni.jpg", description: "A resilient creature with great abilities." },
-            { id: 14, name: "Markov Baron Out", price: "$19", image: "img/MTG/mat-14-markov-baron.jpg", description: "A resilient creature with great abilities." },
-            { id: 15, name: "Urborg Scavengers", price: "$19", image: "img/MTG/mat-15-urborg-scavengers.jpg", description: "A resilient creature with great abilities." },
-            { id: 16, name: "Arni Metalbrow", price: "$19", image: "img/MTG/mat-16-arni-metalbrow.jpg", description: "A resilient creature with great abilities." }
-        ];
-
-        const productsPerPage = 8;
+        const productsPerPage = 12;
         let currentPage = 1;
 
-        function loadProducts(page) {
-            const start = (page - 1) * productsPerPage;
-            const end = start + productsPerPage;
-            const productList = document.getElementById("product-list");
+        const params = new URLSearchParams(window.location.search);
+        const searchTerm = params.get("search") || "";
 
-            // Clear previous products
+
+        async function loadPage(page, searchTerm = "") {
+            const start = (page - 1) * productsPerPage;
+            const end = start + productsPerPage - 1;
+        
+            console.log("Querying cards with range:", start, end);
+        
+            productList.innerHTML = "<p>Loading...</p>";
+            paginationLinks.innerHTML = "";
+        
+            let query = supabase
+                .from("cards")
+                .select("*", { count: "exact" })
+                .gt("quantity", 0);
+        
+            if (searchTerm) {
+                query = query.ilike("name", `%${searchTerm}%`);
+            }
+        
+            query = query.range(start, end);
+        
+            const { data: cards, error, count } = await query;
+        
+            console.log("Supabase result:", cards, error, count);
+        
+            if (error) {
+                console.error("Error fetching cards:", error.message);
+                productList.innerHTML = "<p style='color:red;'>Failed to load cards.</p>";
+                return;
+            }
+        
             productList.innerHTML = "";
 
-            // Loop through the selected products
-            products.slice(start, end).forEach(product => {
-                const productDiv = document.createElement("div");
-                productDiv.classList.add("pro");
-                productDiv.setAttribute("data-id", product.id);
-                productDiv.innerHTML = `
-                    <img src="${product.image}" alt="">
+            if (cards.length === 0) {
+                productList.innerHTML = "<p>No cards found matching your search.</p>";
+                return;
+              }
+            cards.forEach(card => {
+                const imageUrl = card.cardimageurl || 'img/default.jpg';
+                const cardDiv = document.createElement("div");
+                cardDiv.classList.add("pro");
+                cardDiv.setAttribute("data-id", card.id);
+                cardDiv.innerHTML = `
+                    <img src="${imageUrl}" alt="${card.name}">
                     <div class="des">
                         <span>Magic the Gathering</span>
-                        <h5>${product.name}</h5>
+                        <h5>${card.name}</h5>
                         <div class="star">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i>
                             <i class="fas fa-star"></i>
                         </div>
-                        <h4>${product.price}</h4>
+                        <h4>$${card.price}</h4>
                     </div>
+                    <button class="cart-btn" data-id="${card.id}" style="all: unset; position: absolute; bottom: 20px; right: 10px; cursor: pointer;">
+                        <i class="fal fa-shopping-cart cart"></i>
+                    </button>
                 `;
-
-                // Add click event to navigate to product page
-                productDiv.addEventListener("click", function() {
-                    window.location.href = `sproduct.html?id=${product.id}`;
+        
+                cardDiv.addEventListener("click", () => {
+                    window.location.href = `sproduct.html?id=${card.id}`;
                 });
+        
+                const cartBtn = cardDiv.querySelector(".cart-btn");
+                cartBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+        
+                    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+                    const existing = cart.find(p => p.id === card.id);
+        
+                    if (existing) {
+                        existing.quantity += 1;
+                    } else {
+                        cart.push({
+                            id: card.id,
+                            name: card.name,
+                            price: card.price,
+                            image: imageUrl,
+                            quantity: 1
+                        });
+                    }
+        
+                    localStorage.setItem("cart", JSON.stringify(cart));
+                    alert(`${card.name} added to cart!`);
+                });
+        
+                productList.appendChild(cardDiv);
+            });
+        
+            const totalPages = Math.ceil(count / productsPerPage);
+            for (let i = 1; i <= totalPages; i++) {
+                const pageLink = document.createElement("a");
+                pageLink.href = "#";
+                pageLink.classList.add("page-link");
+                pageLink.textContent = i;
+                if (i === page) pageLink.classList.add("active");
+        
+                pageLink.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    currentPage = i;
+                    loadPage(currentPage, searchTerm); // <- Pass search term!
+                });
+        
+                paginationLinks.appendChild(pageLink);
+            }
+        }        
 
-                productList.appendChild(productDiv);
+        loadPage(currentPage, searchTerm);
+    }
+
+    const productName = document.getElementById("product-name");
+    const productPrice = document.getElementById("product-price");
+    const productDescription = document.getElementById("product-description");
+    const productImage = document.getElementById("product-image");
+
+    if (productName && productPrice && productDescription && productImage) {
+        const params = new URLSearchParams(window.location.search);
+        const cardId = params.get("id");
+
+        if (!cardId) {
+            console.error("No card ID found in URL.");
+            return;
+        }
+
+        const result = await supabase
+            .from("cards")
+            .select("*")
+            .eq("id", cardId)
+            .gt("quantity", 0)
+            .single();
+
+        const card = result.data;
+        const error = result.error;
+
+        if (error || !card) {
+            console.error("Failed to fetch card:", error?.message || "No data returned.");
+            productName.textContent = "Card not found.";
+            return;
+        }
+
+        const imageUrl = card.cardimageurl || "img/default.jpg";
+        productName.textContent = card.name;
+        productPrice.textContent = `$${card.price}`;
+        productDescription.textContent = card.description || "No description available.";
+        productImage.src = imageUrl;
+        productImage.alt = card.name;
+
+        // Now that card is available, set up "Add to Cart"
+        const addToCartBtn = document.querySelector("button.normal");
+        const qtyInput = document.querySelector(".single-pro-details input");
+
+        console.log("Cart button:", addToCartBtn);
+        console.log("Qty input:", qtyInput);
+
+        if (addToCartBtn && qtyInput) {
+            console.log("Add to Cart button found");
+
+            addToCartBtn.addEventListener("click", () => {
+                console.log("🛒 Button clicked!");
+
+                const qty = parseInt(qtyInput.value) || 1;
+                const cart = JSON.parse(localStorage.getItem("cart")) || [];
+                const existing = cart.find(p => p.id === card.id);
+
+                if (existing) {
+                    existing.quantity += qty;
+                } else {
+                    cart.push({
+                        id: card.id,
+                        name: card.name,
+                        price: card.price,
+                        image: imageUrl,
+                        quantity: qty
+                    });
+                }
+
+                console.log("📦 Adding to cart:", cart);
+
+                localStorage.setItem("cart", JSON.stringify(cart));
+                alert(`${card.name} added to cart!`);
             });
         }
 
-        // Load initial page
-        loadProducts(currentPage);
+        //Featured Products (unchanged)
+        const featuredContainer = document.querySelector("#product1 .pro-container");
+        if (featuredContainer) {
+            const { data: featuredCards, error: featuredError } = await supabase
+                .from("cards")
+                .select("*")
+                .neq("id", cardId)
+                .gt("quantity", 0)
+                .limit(4);
 
-        // Pagination Click Event
-        document.querySelectorAll(".page-link").forEach(link => {
-            link.addEventListener("click", function(event) {
-                event.preventDefault();
-                const page = parseInt(this.getAttribute("data-page"));
-                if (page) {
-                    currentPage = page;
-                    loadProducts(page);
+            if (!featuredError && featuredCards) {
+                featuredCards.forEach(featured => {
+                    const img = featured.cardimageurl || "img/default.jpg";
+                    const div = document.createElement("div");
+                    div.classList.add("pro");
+                    div.innerHTML = `
+                        <img src="${img}" alt="${featured.name}">
+                        <div class="des">
+                            <span>Magic the Gathering</span>
+                            <h5>${featured.name}</h5>
+                            <div class="star">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <h4>$${featured.price}</h4>
+                        </div>
+                        <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                    `;
+                    div.addEventListener("click", () => {
+                        window.location.href = `sproduct.html?id=${featured.id}`;
+                    });
+                    featuredContainer.appendChild(div);
+                });
+            }
+        }
+    }
+
+    //Cart page Logic
+    //Cart Page
+    const cartBody = document.getElementById("cart-body");
+    const subtotalDisplay = document.querySelector("#subtotal table");
+
+    if (cartBody) {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        if (cart.length === 0) {
+            cartBody.innerHTML = "<tr><td colspan='6'>Your cart is empty.</td></tr>";
+            if (subtotalDisplay) subtotalDisplay.innerHTML = `<tr><td>Total</td><td>$0</td></tr>`;
+            return;
+        }
+
+        let total = 0;
+        cartBody.innerHTML = "";
+        cart.forEach(item => {
+            const row = document.createElement("tr");
+            const itemTotal = item.quantity * item.price;
+            total += itemTotal;
+            row.innerHTML = `
+                <td><a href="#" class="remove-item" data-id="${item.id}"><i class="far fa-times-circle"></i></a></td>
+                <td><img src="${item.image}" alt="${item.name}"></td>
+                <td>${item.name}</td>
+                <td>$${item.price}</td>
+                <td><input type="number" class="cart-qty" data-id="${item.id}" value="${item.quantity}" min="1"></td>
+                <td>$${itemTotal}</td>
+            `;
+            cartBody.appendChild(row);
+        });
+
+        if (subtotalDisplay) {
+            subtotalDisplay.innerHTML = `
+                <tr><td>Cart Subtotal</td><td>$${total}</td></tr>
+                <tr><td>Shipping</td><td>Free</td></tr>
+                <tr><td><strong>Total</strong></td><td><strong>$${total}</strong></td></tr>
+            `;
+        }
+
+        document.querySelectorAll(".cart-qty").forEach(input => {
+            input.addEventListener("change", (e) => {
+                const id = parseInt(e.target.dataset.id);
+                const newQty = parseInt(e.target.value);
+                const cart = JSON.parse(localStorage.getItem("cart")) || [];
+                const item = cart.find(p => p.id === id);
+                if (item) {
+                    item.quantity = newQty;
+                    localStorage.setItem("cart", JSON.stringify(cart));
+                    location.reload();
                 }
             });
         });
+
+        document.querySelectorAll(".remove-item").forEach(link => {
+            link.addEventListener("click", (e) => {
+                e.preventDefault();
+                const id = parseInt(link.dataset.id);
+                const newCart = cart.filter(p => p.id !== id);
+                localStorage.setItem("cart", JSON.stringify(newCart));
+                location.reload();
+            });
+        });
+    }
+
+    //Checkout Page Logic
+    const checkoutBody = document.getElementById("checkout-body");
+    const checkoutSubtotal = document.querySelector("#checkoutTable table");
+
+    if (checkoutBody) {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        if (cart.length === 0) {
+            checkoutBody.innerHTML = "<tr><td colspan='5'>Your cart is empty.</td></tr>";
+            if (checkoutSubtotal) {
+                checkoutSubtotal.innerHTML = `
+                    <tr><td>Cart Subtotal</td><td>$0</td></tr>
+                    <tr><td>Shipping</td><td>Free</td></tr>
+                    <tr><td><strong>Total</strong></td><td><strong>$0</strong></td></tr>
+                `;
+            }
+            return;
+        }
+
+        let total = 0;
+
+        cart.forEach(item => {
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td><img src="${item.image}" alt="${item.name}"></td>
+                <td>${item.name}</td>
+                <td>$${item.price}</td>
+                <td>${item.quantity}</td>
+                <td>$${itemTotal}</td>
+            `;
+            checkoutBody.appendChild(row);
+        });
+
+        if (checkoutSubtotal) {
+            checkoutSubtotal.innerHTML = `
+                <tr><td>Cart Subtotal</td><td>$${total}</td></tr>
+                <tr><td>Shipping</td><td>Free</td></tr>
+                <tr><td><strong>Total</strong></td><td><strong>$${total}</strong></td></tr>
+            `;
+        }
+
+        const placeOrderBtn = document.getElementById("place-order-btn");
+
+        if (placeOrderBtn) {
+            placeOrderBtn.addEventListener("click", async () => {
+                const inputs = document.querySelectorAll(".required-input");
+                for (let input of inputs){
+                    if(!input.value.trim()){
+                        alert("Please fill out all required fields before placing your order.");
+                        input.focus();
+                        return;
+                    }
+                }
+
+                const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+                if (cart.length === 0) {
+                    alert("Your cart is empty.");
+                    return;
+                }
+
+                for (const item of cart) {
+                    // Get current quantity
+                    const { data: current, error: fetchError } = await supabase
+                        .from("cards")
+                        .select("quantity")
+                        .eq("id", item.id)
+                        .single();
+
+                    if (fetchError) {
+                        alert(`Error retrieving ${item.name}: ${fetchError.message}`);
+                        return;
+                    }
+
+                    const newQty = current.quantity - item.quantity;
+                    if (newQty < 0) {
+                        alert(`Not enough stock for ${item.name}.`);
+                        return;
+                    }
+
+                    // Update quantity in database
+                    const { error: updateError } = await supabase
+                        .from("cards")
+                        .update({ quantity: newQty })
+                        .eq("id", item.id);
+
+                    if (updateError) {
+                        alert(`Error updating ${item.name}: ${updateError.message}`);
+                        return;
+                    }
+                }
+
+                // Clear the cart and show confirmation
+                localStorage.removeItem("cart");
+                alert("Order placed successfully!");
+
+                // Optional redirect
+                 window.location.href = "index.html";
+            });
+        }
+
+    }
+
+    //Search bar logic (for index.html)
+    const searchForm = document.getElementById("search-form");
+    const searchInput = document.getElementById("search-input");
+
+    if (searchForm && searchInput) {
+        searchForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const query = searchInput.value.trim();
+            if (query) {
+                window.location.href = `shop.html?search=${encodeURIComponent(query)}`;
+            }
+        });
+    }
+
+    //Search toggle icon logic
+    const searchToggle = document.getElementById("search-toggle");
+    const searchFormEl = document.getElementById("search-form");
+
+    if (searchToggle && searchFormEl) {
+        searchToggle.addEventListener("click", () => {
+            searchFormEl.classList.toggle("show");
+            const input = document.getElementById("search-input");
+            if (input) input.focus();
+        });
     }
 
 });
-
-document.addEventListener("DOMContentLoaded", function () {
-    const mainImage = document.getElementById("product-image");
-    const smallImages = document.querySelectorAll(".small-img");
-
-    smallImages.forEach(img => {
-        img.addEventListener("click", function() {
-            mainImage.src = this.src;
-        });
-    });
-});
-
-
-// Load product details when the page loads
-window.onload = displayProductDetails;

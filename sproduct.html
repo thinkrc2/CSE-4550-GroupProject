@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
 
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        const SUPABASE_URL = 'https://ezmppukfhgzsfekakkix.supabase.co'
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6bXBwdWtmaGd6c2Zla2Fra2l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0NjY2MDgsImV4cCI6MjA2MjA0MjYwOH0.0FJr4AhMbyImCTlNmqMykiKnNRYeXYT5soMS8O4POYA'
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      </script>
 </head>
 <body>
     <section id="header">
@@ -17,11 +23,18 @@
             <ul id="navbar">
                 <li><a href="index.html">Home</a></li>
                 <li><a class="active" href="shop.html">Shop</a></li>
-                <li><a href="blog.html">Blog</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="contact.html">Contact</a></li>
                 <li><a href="loginupgraded.html">Sign-In</a></li>
                 <li id="lg-bag"><a href="cart.html"><i class="far fa-shopping-bag"></i></a></li>
+                <li>
+                    <div id="search-wrapper">
+                      <button id="search-toggle"><i class="fas fa-search"></i></button>
+                      <form id="search-form">
+                        <input type="text" id="search-input" placeholder="Search cards..." />
+                      </form>
+                    </div>
+                  </li>
                 <a href="#" id="close"><i class="far fa-times"></i></a>
             </ul>
         </div>
@@ -36,7 +49,7 @@
             <!--<img id="product-image" src="" width="100%" id="MainImg" alt="">-->
             <img id="product-image" src="" width="100%" alt="">
 
-            <div class="small-img-group">
+            <!--<div class="small-img-group">
                 <div class="small-img-col">
                     <img src="img/MTG/mat-1-coppercoat-vanguard.jpg" width="100%" class="small-img" alt="">
                 </div>
@@ -49,7 +62,7 @@
                 <div class="small-img-col">
                     <img src="img/MTG/mat-4-metropolis-reformer.jpg" width="100%" class="small-img" alt="">
                 </div>
-            </div>
+            </div>-->
         </div>
 
         <div class="single-pro-details">
@@ -65,72 +78,9 @@
 
     <section id="product1" class="section-p1">
         <h2>Featured Products</h2>
-        <p>Some text here</p>
+        <p>These are some more cards we thought you'd like</p>
         <div class="pro-container">
-            <div class="pro" data-id="2">
-                <img src="img/MTG/mat-2-deification.jpg" alt="">
-                <div class="des">
-                    <span>MTG</span>
-                    <h5>Description</h5>
-                    <div class="star">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <h4>$19</h4>
-                </div>
-                <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
-            </div>
-            <div class="pro" data-id="3">
-                <img src="img/MTG/mat-3-harnessed-snubhorn.jpg" alt="">
-                <div class="des">
-                    <span>MTG</span>
-                    <h5>Description</h5>
-                    <div class="star">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <h4>$19</h4>
-                </div>
-                <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
-            </div>
-            <div class="pro" data-id="4">
-                <img src="img/MTG/mat-4-metropolis-reformer.jpg" alt="">
-                <div class="des">
-                    <span>MTG</span>
-                    <h5>Description</h5>
-                    <div class="star">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <h4>$19</h4>
-                </div>
-                <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
-            </div>
-            <div class="pro" data-id="5">
-                <img src="img/MTG/mat-5-spark-rupture.jpg" alt="">
-                <div class="des">
-                    <span>MTG</span>
-                    <h5>Description</h5>
-                    <div class="star">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <h4>$19</h4>
-                </div>
-                <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
-            </div>
+            
         </div>
     </section>
 
@@ -173,24 +123,6 @@
             <img src="img/pay/pay.png" alt="">
         </div>
     </footer>
-
-    <script>
-        var MainImg = document.getElementById("MainImg");
-        var smallimg = document.getElementsByClassName("small-img");
-
-        smallimg[0].onclick = function(){
-            MainImg.src = smallimg[0].src;
-        }
-        smallimg[1].onclick = function(){
-            MainImg.src = smallimg[1].src;
-        }
-        smallimg[2].onclick = function(){
-            MainImg.src = smallimg[2].src;
-        }
-        smallimg[3].onclick = function(){
-            MainImg.src = smallimg[3].src;
-        }
-    </script>
 
     <script src="script.js"></script>
 </body>

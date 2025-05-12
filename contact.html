@@ -2,13 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buy & Battle TCG</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/fontawesome.min.css" integrity="sha384-NvKbDTEnL+A8F/AA5Tc5kmMLSJHUO868P+lDtTpJIeQdGYaUIuLr4lVGOEA1OcMy" crossorigin="anonymous">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
 
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        const SUPABASE_URL = 'https://ezmppukfhgzsfekakkix.supabase.co'
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6bXBwdWtmaGd6c2Zla2Fra2l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0NjY2MDgsImV4cCI6MjA2MjA0MjYwOH0.0FJr4AhMbyImCTlNmqMykiKnNRYeXYT5soMS8O4POYA'
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      </script>
 </head>
 <body>
     <section id="header">
@@ -18,11 +24,18 @@
             <ul id="navbar">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="shop.html">Shop</a></li>
-                <li><a href="blog.html">Blog</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a class="active" href="contact.html">Contact</a></li>
                 <li><a href="loginupgraded.html">Sign-In</a></li>
                 <li id="lg-bag"><a href="cart.html"><i class="far fa-shopping-bag"></i></a></li>
+                <li>
+                    <div id="search-wrapper">
+                      <button id="search-toggle"><i class="fas fa-search"></i></button>
+                      <form id="search-form">
+                        <input type="text" id="search-input" placeholder="Search cards..." />
+                      </form>
+                    </div>
+                  </li>
                 <a href="#" id="close"><i class="far fa-times"></i></a>
             </ul>
         </div>
@@ -46,28 +59,29 @@
                     <div class="icon"><i class="fa fa-map-marker" aria-hidden="true"></i></div>
                     <div class="text">
                         <h3>Address</h3>
-                        <p>1107 Cedar Ave,<br>Redlands, California,<br>92373</p>
+                        <p>5500 University Pkwy<br>San Bernardino, CA<br>92407</p>
                     </div>
                 </div>
                 <div class="box">
                     <div class="icon"><i class="fa fa-phone" aria-hidden="true"></i></div>
                     <div class="text">
                         <h3>Phone</h3>
-                        <p>909-279-5130</p>
+                        <p>(909)537-5000</p>
                     </div>
                 </div>
                 <div class="box">
                     <div class="icon"><i class="fa fa-envelope" aria-hidden="true"></i></div>
                     <div class="text">
                         <h3>Email</h3>
-                        <p>scottrenfrow01@gmail.com</p>
+                        <p>testbuyandbattle@gmail.com</p>
                     </div>
                 </div>
             </div>
             <div class="contactForm">
                 <form action="https://api.web3forms.com/submit" method="POST">
                     <h2>Send Message</h2>
-                    <input type="hidden" name="access_key" value="63c4ffaa-d95e-42da-922a-37f04f56ccc5">
+                    <input type="hidden" name="access_key" value="86c20d47-3c92-4ba8-8864-b040ec7c5deb">
+                    <!--<input type="hidden" name="access_key" value="63c4ffaa-d95e-42da-922a-37f04f56ccc5">-->
                     <div class="inputBox">
                         <input type="text" name="name" required>
                         <span>Full Name</span>
