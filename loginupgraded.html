@@ -37,6 +37,42 @@
         <p>Don't have an account?<a href="SignUpUpgraded.html"> sign up</a> </p>
         <p>Explore Our Store without an account. <a href="https://buyandbattle.com/shop.html">shop</a> </p>
     </div>
-    <script src="validate.js"></script>
+    <script>
+        // 1) Your project credentials
+        const SUPABASE_URL     = 'https://ezmppukfhgzsfekakkix.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6bXBwdWtmaGd6c2Zla2Fra2l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0NjY2MDgsImV4cCI6MjA2MjA0MjYwOH0.0FJr4AhMbyImCTlNmqMykiKnNRYeXYT5soMS8O4POYA';
+        
+        // 2) Grab createClient from the global supabase library
+        const { createClient } = window.supabase;
+        
+        // 3) Build exactly one client instance
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // 4) If already signed in, send straight home
+        supabase.auth.getSession().then(({ data:{ session } }) => {
+          if (session) window.location.replace('index.html');
+        });
+        
+        // 5) Wire up your form submission
+        document.getElementById('login-form')
+          .addEventListener('submit', async e => {
+            e.preventDefault();
+        
+            // 🚨 Read from the correct IDs here!
+            const email    = document.getElementById('email-input').value.trim();
+            const password = document.getElementById('password-input').value;
+        
+            console.log('🔐 Logging in with', email);
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) {
+              alert('Login error: ' + error.message);
+              return;
+            }
+        
+            // ✅ On success, redirect so index.html can see the new session
+            window.location.replace('index.html');
+          });
+        </script>
+        
   </body>
   </html>

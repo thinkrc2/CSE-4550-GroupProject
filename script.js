@@ -2,58 +2,21 @@
 const bar = document.getElementById('bar');
 const close = document.getElementById('close');
 const nav = document.getElementById('navbar');
-if (bar) bar.addEventListener('click', () => nav.classList.add('active'));
-if (close) close.addEventListener('click', () => nav.classList.remove('active'));
 
-const supabase = window.supabaseClient;
-
-// swap Sign-In for Welcome + Logout
-async function updateNavForUser() {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const navbar = document.getElementById('navbar');
-
-  if (!session?.user) {
-    if (!navbar.querySelector('a[href="loginupgraded.html"]')) {
-      const li = document.createElement('li');
-      li.innerHTML = `<a href="loginupgraded.html">Sign-In</a>`;
-      navbar.insertBefore(li, navbar.querySelector('#lg-bag'));
-    }
-    return;
-  }
-
-  const signInLi = navbar.querySelector(
-    'a[href="loginupgraded.html"]'
-  )?.parentElement;
-  if (signInLi) signInLi.remove();
-
-  const { data: profile, error } = await supabase
-    .from('profiles')
-    .select('username')
-    .eq('id', session.user.id)
-    .single();
-  if (error || !profile) return console.error('Profile load error:', error);
-
-  const li = document.createElement('li');
-  li.id = 'user-menu';
-  li.innerHTML = `
-    <span class="welcome">Welcome, ${profile.username}</span>
-    <button id="logout-btn">Log Out</button>
-  `;
-  navbar.insertBefore(li, navbar.querySelector('#lg-bag'));
-
-  document.getElementById('logout-btn').addEventListener('click', async () => {
-    await supabase.auth.signOut();
-    window.location.reload();
-  });
+if (bar) {
+    bar.addEventListener('click', () => nav.classList.add('active'));
+}
+if (close) {
+    close.addEventListener('click', () => nav.classList.remove('active'));
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-  await updateNavForUser();
-  supabase.auth.onAuthStateChange(() => updateNavForUser());
+// Supabase setup
+const supabaseUrl = 'https://ezmppukfhgzsfekakkix.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6bXBwdWtmaGd6c2Zla2Fra2l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0NjY2MDgsImV4cCI6MjA2MjA0MjYwOH0.0FJr4AhMbyImCTlNmqMykiKnNRYeXYT5soMS8O4POYA';
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-  console.log('✅ DOM fully loaded');
+document.addEventListener("DOMContentLoaded", async function () {
+    console.log("✅ DOM fully loaded");
     const container = document.getElementById("card-container"); // homepage
     const productList = document.getElementById("product-list"); // shop page
     const paginationLinks = document.getElementById("pagination-links");
